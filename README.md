@@ -26,7 +26,7 @@ const loadConfig = require('use-config-json');
   JSON object, we will use this as a schema & fallback to default config value.
 
   Format: {
-    [key: string]: "string or number"
+    [key: string]: "any"
   }
 
   const example = {
@@ -74,3 +74,7 @@ const defaultConfig = {
 const config: object = loadConfig(defaultConfig);
 console.log(config);
 ```
+
+## Note
+
+Note that nested objects wouldn't be parsed from `process.env` or either `.env` file as well

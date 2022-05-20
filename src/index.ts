@@ -9,9 +9,6 @@ dotenv.config();
 
   Written by AyanamiTech @ May 20th, 2022
 **/
-export interface config {
-  [name:string]: number | string;
-}
 
 function readConfig(configFile:string): object | undefined {
   const configPath = path.join(process.cwd(), configFile);
@@ -34,19 +31,19 @@ function readConfig(configFile:string): object | undefined {
   2. Will fallback to environment value if possible
   3. Will use default value as a final fallback
 **/
-function loadValue(defaultConfig:config, configFile?:object): object {
+function loadValue(defaultConfig:object, configFile?:object): object {
   const getKeyValue = (key: string) => (obj: Record<string, any>) => obj[key];
   const keyValue = Object.keys(defaultConfig).map((k:string) => {
-    const value: string | number = configFile ? getKeyValue(k)(configFile) : getKeyValue(k)(process.env) ? getKeyValue(k)(process.env) : getKeyValue(k)(defaultConfig);
+    const value = configFile ? getKeyValue(k)(configFile) : getKeyValue(k)(process.env) ? getKeyValue(k)(process.env) : getKeyValue(k)(defaultConfig);
     return {
       key: k,
       value
     };
   });
-  return keyValue.reduce<Record<string, string | number>>((acc, {key,value}) => (acc[key] = value, acc), {});
+  return keyValue.reduce<Record<string, any>>((acc, {key,value}) => (acc[key] = value, acc), {});
 }
 
-export default function loadConfig(defaultConfig:config, configFile?:string): object {
+export default function loadConfig(defaultConfig:object, configFile?:string): object {
   const configPath = configFile ? configFile : './config.json';
   const config = loadValue(defaultConfig, readConfig(configPath));
   return config;
