@@ -43,8 +43,18 @@ function loadValue(defaultConfig:object, configFile?:object): object {
   return keyValue.reduce<Record<string, any>>((acc, {key,value}) => (acc[key] = value, acc), {});
 }
 
-export default function loadConfig(defaultConfig:object, configFile?:string): object {
+function loadConfig(defaultConfig:object, configFile?:string): object {
   const configPath = configFile ? configFile : './config.json';
   const config = loadValue(defaultConfig, readConfig(configPath));
   return config;
 }
+
+function saveConfig(defaultConfig:object, configFile?:string) {
+  const configPath = configFile ? configFile : './config.json';
+  const config = loadConfig(defaultConfig, configPath);
+  fs.writeFileSync(path.join(process.cwd(), configPath), JSON.stringify(config, null, 2));
+  console.log(`Exported config as ./${configPath}`);
+}
+
+loadConfig.saveConfig = saveConfig;
+export default loadConfig;
