@@ -11,13 +11,13 @@ dotenv.config();
 **/
 
 function readConfig(configFile:string): object | undefined {
-  const configPath = path.join(process.cwd(), configFile);
+  const configPath = fs.existsSync(configFile) ? configFile : path.join(process.cwd(), configFile);
   if (!fs.existsSync(configPath)) {
     console.log(`${configFile} not available on path ${configPath}, will either use environment variables or fallback to default value`);
     return;
   }
   try {
-    const config = fs.readFileSync(path.join(process.cwd(), configFile), { encoding: 'utf8' });
+    const config = fs.readFileSync(configPath, { encoding: 'utf8' });
     return JSON.parse(config);
   } catch (e) {
     // Catch error while parsing JSON from string (Since filesystem parses as string by default)
