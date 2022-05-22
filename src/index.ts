@@ -34,7 +34,7 @@ function readConfig(configFile:string): object | undefined {
 function loadValue(defaultConfig:object, configFile?:object): object {
   const getKeyValue = (key: string) => (obj: Record<string, any>) => obj[key];
   const keyValue = Object.keys(defaultConfig).map((k:string) => {
-    const value = configFile ? getKeyValue(k)(configFile) : getKeyValue(k)(process.env) ? getKeyValue(k)(process.env) : getKeyValue(k)(defaultConfig);
+    const value = (configFile && getKeyValue(k)(configFile)) ? getKeyValue(k)(configFile) : getKeyValue(k)(process.env) ? getKeyValue(k)(process.env) : getKeyValue(k)(defaultConfig);
     return {
       key: k,
       value
@@ -43,18 +43,17 @@ function loadValue(defaultConfig:object, configFile?:object): object {
   return keyValue.reduce<Record<string, any>>((acc, {key,value}) => (acc[key] = value, acc), {});
 }
 
-function loadConfig(defaultConfig:object, configFile?:string): object {
+export function loadConfig(defaultConfig:object, configFile?:string): object {
   const configPath = configFile ? configFile : './config.json';
   const config = loadValue(defaultConfig, readConfig(configPath));
   return config;
 }
 
-function saveConfig(defaultConfig:object, configFile?:string) {
+export function saveConfig(defaultConfig:object, configFile?:string) {
   const configPath = configFile ? configFile : './config.json';
   const config = loadConfig(defaultConfig, configPath);
   fs.writeFileSync(path.join(process.cwd(), configPath), JSON.stringify(config, null, 2));
   console.log(`Exported config as ./${configPath}`);
 }
 
-loadConfig.saveConfig = saveConfig;
 export default loadConfig;

@@ -20,7 +20,7 @@ $ npm i --save use-config-json
 
 ```js
 // CommonJS
-const loadConfig = require('use-config-json');
+const {loadConfig} = require('use-config-json');
 
 /**
   JSON object, we will use this as a schema & fallback to default config value.
