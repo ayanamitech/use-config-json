@@ -1,8 +1,18 @@
-import * as process from 'node:process';
-import * as fs from 'node:fs';
-import * as path from 'node:path';
+import * as process from 'process';
+import * as fs from 'fs';
+import * as path from 'path';
 import * as dotenv from 'dotenv';
 dotenv.config();
+
+interface AnyObject {
+  [name: string]: any
+}
+
+function filterProperties(object1: AnyObject, object2: AnyObject): AnyObject {
+  const result: AnyObject = {};
+  Object.keys(object2).filter(key => key in object1).forEach(key => result[key] = object2[key]);
+  return result;
+}
 
 /**
   Config module for Node.js services / cli tools
@@ -32,15 +42,10 @@ function readConfig(configFile:string): object | undefined {
   3. Will use default value as a final fallback
 **/
 function loadValue(defaultConfig:object, configFile?:object): object {
-  const getKeyValue = (key: string) => (obj: Record<string, any>) => obj[key];
-  const keyValue = Object.keys(defaultConfig).map((k:string) => {
-    const value = (configFile && getKeyValue(k)(configFile)) ? getKeyValue(k)(configFile) : getKeyValue(k)(process.env) ? getKeyValue(k)(process.env) : getKeyValue(k)(defaultConfig);
-    return {
-      key: k,
-      value
-    };
-  });
-  return keyValue.reduce<Record<string, any>>((acc, {key,value}) => (acc[key] = value, acc), {});
+  const configObj = filterProperties(defaultConfig, configFile || {});
+  const processObj = filterProperties(defaultConfig, process.env);
+  const result = Object.assign(Object.assign(defaultConfig, processObj), configObj);
+  return result;
 }
 
 export function loadConfig(defaultConfig:object, configFile?:string): object {

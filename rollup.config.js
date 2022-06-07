@@ -1,48 +1,54 @@
-import fs from "fs";
-import typescript from "rollup-plugin-typescript2";
-
+import fs from 'fs';
+import esbuild from 'rollup-plugin-esbuild';
 const license = fs.readFileSync("LICENSE", {encoding: "utf-8"});
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires, no-undef
-const pkg = require("./package.json");
+import pkg from './package.json';
+const deps = pkg.dependencies || {};
+const peerDeps = pkg.peerDependencies || {};
 
 const banner = [
   "/*!",
   ...license.split("\n").map(o => ` * ${o}`),
   " */",
 ].join("\n");
-const input = "src/index.ts";
-const external = Object.keys(pkg.dependencies).concat(["events"]);
+const external = Object.keys(deps).concat(Object.keys(peerDeps)).concat(["events"]);
+
+fs.mkdirSync('dist');
+fs.mkdirSync('dist/cjs');
+fs.mkdirSync('dist/mjs');
 
 // main
 const main = {
-  input,
+  input: 'src/index.ts',
   plugins: [
-    typescript({
-      check: true,
-      clean: true,
-      tsconfigOverride: {
-        compilerOptions: {
-          module: "ES2015",
-        }
-      },
+    esbuild({
+      include: /\.[jt]sx?$/,
+      exclude: /node_modules/,
+      minify: true,
+      sourceMap: false,
+      target: 'node12',
+      tsconfig: 'tsconfig.json'
     }),
   ],
   external,
   output: [
     {
       banner,
-      file: pkg.main,
+      file: 'dist/cjs/index.js',
       format: "cjs",
+      esModule: false,
+      exports: 'named',
     },
     {
       banner,
-      file: pkg.module,
+      file: 'dist/mjs/index.js',
       format: "es",
+      exports: 'named',
     },
   ],
 };
 
 export default [
-  main,
+  main
 ];

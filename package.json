@@ -1,19 +1,20 @@
 {
   "name": "use-config-json",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Load configuation object from either config.json or system environment value",
-  "main": "./dist/index.cjs.js",
-  "module": "./dist/index.es.js",
-  "types": "./dist/types/index.d.ts",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/mjs/index.js",
+  "types": "./types/index.d.ts",
+  "browser": "./dist/browser/index.js",
   "scripts": {
-    "build": "npm run clean && npm run build:module && npm run build:types",
-    "build:module": "rollup -c",
-    "build:types": "tsc -p tsconfig.json --outDir dist/types --declaration --emitDeclarationOnly",
-    "clean": "rimraf dist",
-    "lint": "eslint . --ext .ts",
-    "lint:fix": "eslint . --ext .ts --fix",
     "start": "npm run lint && npm run build",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npm run clean && npm run build:type && npm run build:node",
+    "clean": "rimraf dist",
+    "build:type": "tsc -p tsconfig.json --outDir types --declaration --emitDeclarationOnly",
+    "build:node": "rollup -c",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix"
   },
   "repository": {
     "type": "git",
@@ -43,11 +44,13 @@
     "@types/node": "^17.0.35",
     "@typescript-eslint/eslint-plugin": "^5.25.0",
     "@typescript-eslint/parser": "^5.25.0",
-    "eslint": "^8.15.0",
+    "esbuild": "^0.14.42",
+    "eslint": "^8.17.0",
     "rimraf": "^3.0.2",
-    "rollup": "^2.74.1",
+    "rollup": "^2.75.5",
+    "rollup-plugin-esbuild": "^4.9.1",
     "rollup-plugin-typescript2": "^0.31.2",
     "ts-node": "^10.7.0",
-    "typescript": "^4.6.4"
+    "typescript": "^4.7.3"
   }
 }
