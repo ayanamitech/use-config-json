@@ -10,7 +10,7 @@
     "start": "npm run lint && npm run build",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npm run clean && npm run build:type && npm run build:node",
-    "clean": "rimraf dist",
+    "clean": "rimraf types dist",
     "build:type": "tsc -p tsconfig.json --outDir types --declaration --emitDeclarationOnly",
     "build:node": "rollup -c",
     "lint": "eslint . --ext .ts",

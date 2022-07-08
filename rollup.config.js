@@ -38,13 +38,11 @@ const main = {
       file: 'dist/cjs/index.js',
       format: "cjs",
       esModule: false,
-      exports: 'named',
     },
     {
       banner,
       file: 'dist/mjs/index.js',
       format: "es",
-      exports: 'named',
     },
   ],
 };
